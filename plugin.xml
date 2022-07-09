@@ -20,6 +20,7 @@
                 <pod name="AMap3DMap-NO-IDFA" />
                 <pod name="AMapSearch-NO-IDFA" />
                 <pod name="AMapLocation-NO-IDFA" />
+                <pod name="MJRefresh" />
             </pods>
         </podspec>
     </platform>
