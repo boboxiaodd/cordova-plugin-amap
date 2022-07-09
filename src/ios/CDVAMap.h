@@ -1,4 +1,4 @@
 #import <Cordova/CDVPlugin.h>
-@interface CDVPicker : CDVPlugin {}
+@interface CDVAMap : CDVPlugin {}
 
 @end

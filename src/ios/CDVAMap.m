@@ -1,82 +1,82 @@
 #import <Cordova/CDV.h>
-#import "CDVPicker.h"
-#import <BRPickerView/BRPickerView.h>
+#import "CDVAMap.h"
+#import <AMapLocationKit/AMapLocationKit.h>
+#import <AMapFoundationKit/AMapFoundationKit.h>
 
-@implementation CDVPicker
--(void)open_datepicker:(CDVInvokedUrlCommand *)command
+@interface CDVAMap () <AMapLocationManagerDelegate>
+@property (nonatomic,strong) AMapLocationManager *locationManager;
+@end
+
+@implementation CDVAMap
+-(void)pluginInitialize
 {
-    NSDictionary *options = [command.arguments objectAtIndex: 0];
-    BRDatePickerView *datePickerView = [[BRDatePickerView alloc]init];
-    datePickerView.pickerMode = BRDatePickerModeYMD;
-    datePickerView.title = [options valueForKey:@"title"];
-    NSString * select = [options valueForKey:@"select"];
-    NSString * max_date = [options valueForKey:@"max"];
-    NSString * min_date = [options valueForKey:@"min"];
-    if(select) datePickerView.selectDate = [self dateFromString:select];
-    if(min_date) datePickerView.minDate = [self dateFromString:min_date];
-    if(max_date) datePickerView.maxDate = [self dateFromString:max_date];
-    datePickerView.isAutoSelect = NO;
-    datePickerView.resultBlock = ^(NSDate *selectDate, NSString *selectValue) {
-        [self send_event:command withMessage:@{@"result":selectValue} Alive:NO State:YES];
-    };
-    [datePickerView show];
+    [AMapServices sharedServices].apiKey = [self settingForKey:@"amap.key"];
 }
--(void)open_datetimepikcer:(CDVInvokedUrlCommand *)command
-{
-    NSDictionary *options = [command.arguments objectAtIndex: 0];
-    BRDatePickerView *datePickerView = [[BRDatePickerView alloc]init];
-    datePickerView.pickerMode = BRDatePickerModeYMDHM;
-    datePickerView.title = [options valueForKey:@"title"];
-    NSString * select = [options valueForKey:@"select"];
-    NSString * max_date = [options valueForKey:@"max"];
-    NSString * min_date = [options valueForKey:@"min"];
-    if(select) datePickerView.selectDate = [self dateFromString:select];
-    if(min_date) datePickerView.minDate = [self dateFromString:min_date];
-    if(max_date) datePickerView.maxDate = [self dateFromString:max_date];
-    datePickerView.isAutoSelect = NO;
-    datePickerView.resultBlock = ^(NSDate *selectDate, NSString *selectValue) {
-        [self send_event:command withMessage:@{@"result":selectValue} Alive:NO State:YES];
-    };
-    [datePickerView show];
+- (void)location:(CDVInvokedUrlCommand *)command{
+    [AMapLocationManager updatePrivacyAgree:AMapPrivacyAgreeStatusDidAgree];
+    [AMapLocationManager updatePrivacyShow:AMapPrivacyShowStatusDidShow privacyInfo:AMapPrivacyInfoStatusDidContain];
+    _locationManager = [[AMapLocationManager alloc] init];
+    _locationManager.delegate = self;
+    [_locationManager setDesiredAccuracy:kCLLocationAccuracyHundredMeters];
+    //单次定位超时时间
+    [_locationManager setLocationTimeout:6];
+    [_locationManager setReGeocodeTimeout:3];
+    [_locationManager requestLocationWithReGeocode:YES completionBlock:^(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error) {
+        NSLog(@"requestLocationWithReGeocode:xxxxxxxxxxxxx");
+        if (error) {
+            if (error.code == AMapLocationErrorLocateFailed) {
+                [self send_event:command withMessage:@{@"result":@"fail",@"code": @(error.code)} Alive:NO State:YES];
+                return ;
+            }
+            if (error.code == AMapLocationErrorReGeocodeFailed) {
+                [self send_event:command withMessage:@{@"result":@"success",
+                                                       @"lat":[NSString stringWithFormat:@"%g",location.coordinate.latitude],
+                                                       @"lng":[NSString stringWithFormat:@"%g",location.coordinate.longitude],
+                                                       @"city": @"未知城市" } Alive:NO State:YES];
+            }
+        }else{
+            NSString *city = @"";
+            if (regeocode)
+            {
+                city = regeocode.city;
+            }
+            [self send_event:command withMessage:@{@"result":@"success",
+                                                   @"lat":[NSString stringWithFormat:@"%g",location.coordinate.latitude],
+                                                   @"lng":[NSString stringWithFormat:@"%g",location.coordinate.longitude],
+                                                   @"city": city } Alive:NO State:YES];
+        }
+    }];
+
 }
-
--(void)open_picker:(CDVInvokedUrlCommand *)command
-{
+- (void)showMap:(CDVInvokedUrlCommand *)command{
     NSDictionary *options = [command.arguments objectAtIndex: 0];
-    BRStringPickerView *stringPickerView = [[BRStringPickerView alloc]init];
-    stringPickerView.pickerMode = BRStringPickerComponentSingle;
-    stringPickerView.title = [options valueForKey:@"title"];
-    stringPickerView.dataSourceArr = [options valueForKey:@"list"];
-    stringPickerView.selectValue = [options valueForKey:@"select"];
-    stringPickerView.isAutoSelect = NO;
-    stringPickerView.resultModelBlock = ^(BRResultModel *resultModel) {
-        [self send_event:command withMessage:@{@"value":resultModel.value} Alive:NO State:YES];
-    };
-    [stringPickerView show];
+    CLLocation * location = [[CLLocation alloc] initWithLatitude:[[options valueForKey:@"lat"] floatValue] longitude:[[options valueForKey:@"lng"] floatValue]];
+    MapViewController * vc = [[MapViewController alloc] initWithLocation:location title:[options valueForKey:@"title"] subtitle:[options valueForKey:@"subtitle"]];
+    MyNavigationController *nc = [[MyNavigationController alloc] initWithRootViewController:vc];
+    nc.modalPresentationStyle = UIModalPresentationFullScreen;
+    nc.view.backgroundColor = [UIColor whiteColor];
+    [self.viewController presentViewController:nc animated:YES completion:nil];
 }
-
--(void)open_citypicker:(CDVInvokedUrlCommand *)command
-{
+- (void)openMap:(CDVInvokedUrlCommand *)command{
     NSDictionary *options = [command.arguments objectAtIndex: 0];
-    BRAddressPickerView *addressPickerView = [[BRAddressPickerView alloc]init];
-    BOOL onlycity = [[options valueForKey:@"onlycity"] boolValue] || NO;
-    if(onlycity){
-        addressPickerView.pickerMode = BRAddressPickerModeCity;
-    }else{
-        addressPickerView.pickerMode = BRAddressPickerModeArea;
-    }
-    addressPickerView.title = [options valueForKey:@"title"];
-    NSString * city = [options valueForKey:@"city"];
-    if(city){
-        addressPickerView.selectValues = [city componentsSeparatedByString:@","];
-    }
-    addressPickerView.resultBlock = ^(BRProvinceModel *province, BRCityModel *city, BRAreaModel *area) {
-        [self send_event:command withMessage:@{@"province": province.name, @"city": city.name , @"area" : area.name} Alive:NO State:YES];
+    ViewController * vc = [[ViewController alloc] initWithType:[options valueForKey:@"type"]];
+    vc.callBackBlock = ^(NSString *city,NSString *address,NSString * title, NSString * url, CGFloat lat, CGFloat lng) {
+        [self send_event:command withMessage:@{
+            @"name":title,
+            @"address":address,
+            @"url": url,
+            @"city": city,
+            @"lat": [NSString stringWithFormat:@"%g",lat],
+            @"lng": [NSString stringWithFormat:@"%g",lng]
+        } Alive:NO State:YES];
     };
+    MyNavigationController *nc = [[MyNavigationController alloc] initWithRootViewController:vc];
+    nc.view.backgroundColor = [UIColor whiteColor];
+    nc.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self.viewController presentViewController:nc animated:YES completion:^{
 
-    [addressPickerView show];
+    }];
 }
-
 #pragma mark 公共方法
 
 - (void)send_event:(CDVInvokedUrlCommand *)command withMessage:(NSDictionary *)message Alive:(BOOL)alive State:(BOOL)state{
@@ -85,11 +85,8 @@
     if(alive) [res setKeepCallbackAsBool:YES];
     [self.commandDelegate sendPluginResult: res callbackId: command.callbackId];
 }
-- (NSDate *) dateFromString:(NSString *)str
+- (id)settingForKey:(NSString*)key
 {
-    NSDateFormatter* formatter = [[NSDateFormatter alloc]init];
-    [formatter setDateFormat:@"yyyy/MM/dd"];
-    return [formatter dateFromString:str];
+    return [self.commandDelegate.settings objectForKey:[key lowercaseString]];
 }
-
 @end
