@@ -35,6 +35,7 @@
 @property (nonatomic ,strong)NSMutableArray *remoteArray;
 @property (nonatomic ,strong)AMapPOI *currentPOI;//点击选择的当前的位置插入到数组中
 @property (nonatomic ,assign)BOOL isClickPoi;
+@property (nonatomic ,strong) NSString * icon;
 
 @property (nonatomic, strong)UIButton * localButton;
 
@@ -85,13 +86,14 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (instancetype)initWithType:(NSString *)type
+-(instancetype)initWithType:(NSString *)type withIcon:(NSString *)icon;
 {
     self = [super init];
     if (self) {
         self.isSelectedAddress = true;
         self.request = [[AMapPOIAroundSearchRequest alloc] init];
         self.request.keywords  = type;
+        self.icon = icon;
     }
     return self;
 }
@@ -160,7 +162,8 @@
     [_localButton addTarget:self action:@selector(localButtonAction) forControlEvents:UIControlEventTouchUpInside];
 //    _localButton.layer.cornerRadius = 25;
 //    _localButton.clipsToBounds = YES;
-    [_localButton setImage:[UIImage imageNamed:@"ic-my-location"] forState:UIControlStateNormal];
+    NSLog(@"_icon = %@",_icon);
+    [_localButton setImage:[UIImage imageWithContentsOfFile: _icon] forState:UIControlStateNormal];
     [self.mapView addSubview:_localButton];
 
 }

@@ -15,7 +15,7 @@
 typedef void(^CallBackBlock)(NSString *city,NSString *address,NSString *title,NSString * url,CGFloat lat,CGFloat lng);
 
 @interface OpenMapViewController : UIViewController
-    -(instancetype)initWithType:(NSString *)type;
+    -(instancetype)initWithType:(NSString *)type withIcon:(NSString *)icon;
     @property (nonatomic, copy) CallBackBlock callBackBlock;
     @property (nonatomic ,strong)AMapPOIAroundSearchRequest *request;
 @end

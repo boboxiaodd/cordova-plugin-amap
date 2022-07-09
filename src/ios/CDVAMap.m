@@ -8,12 +8,17 @@
 
 @interface CDVAMap () <AMapLocationManagerDelegate>
 @property (nonatomic,strong) AMapLocationManager *locationManager;
+@property (nonatomic,readwrite) NSString * filepath;
 @end
 
 @implementation CDVAMap
 -(void)pluginInitialize
 {
     [AMapServices sharedServices].apiKey = [self settingForKey:@"amap.key"];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *directoryPaths = [fileManager URLsForDirectory:NSLibraryDirectory inDomains:NSUserDomainMask];
+    NSURL *distPath = [[directoryPaths firstObject] URLByAppendingPathComponent:@"NoCloud/www/www"];
+    _filepath = [distPath path];
 }
 - (void)location:(CDVInvokedUrlCommand *)command{
     [AMapLocationManager updatePrivacyAgree:AMapPrivacyAgreeStatusDidAgree];
@@ -62,7 +67,8 @@
 }
 - (void)openMap:(CDVInvokedUrlCommand *)command{
     NSDictionary *options = [command.arguments objectAtIndex: 0];
-    OpenMapViewController * vc = [[OpenMapViewController alloc] initWithType:[options valueForKey:@"type"]];
+    NSString * iconpath = [NSString stringWithFormat:@"%@%@",_filepath,[options valueForKey:@"icon"]];
+    OpenMapViewController * vc = [[OpenMapViewController alloc] initWithType:[options valueForKey:@"type"] withIcon:iconpath];
     vc.callBackBlock = ^(NSString *city,NSString *address,NSString * title, NSString * url, CGFloat lat, CGFloat lng) {
         [self send_event:command withMessage:@{
             @"name":title,
