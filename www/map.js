@@ -1,16 +1,13 @@
 const exec = require('cordova/exec');
 const CDVAMap = {
-    open_datepicker:function (success,option){
-        exec(success,null,'CDVAMap','open_datepicker',[option]);
+    location:function (success){
+        exec(success,null,'CDVAMap','location',[]);
     },
-    open_datetimepikcer:function (success,option){
-        exec(success,null,'CDVAMap','open_datetimepikcer',[option]);
+    showMap:function (success,option){
+        exec(success,null,'CDVAMap','showMap',[option]);
     },
-    open_picker:function (success,option){
-        exec(success,null,'CDVAMap','open_picker',[option]);
-    },
-    open_citypicker:function (success,option){
-        exec(success,null,'CDVAMap','open_citypicker',[option]);
+    openMap:function (success,option){
+        exec(success,null,'CDVAMap','openMap',[option]);
     }
 };
 module.exports = CDVAMap;
