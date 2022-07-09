@@ -12,6 +12,15 @@
         </config-file>
         <header-file src="src/ios/CDVAMap.h" />
         <source-file src="src/ios/CDVAMap.m" />
+        <header-file src="src/ios/MapViewController.h" />
+        <source-file src="src/ios/MapViewController.m" />
+        <header-file src="src/ios/OpenMapViewController.h" />
+        <source-file src="src/ios/OpenMapViewController.m" />
+        <header-file src="src/ios/POITableViewCell.h" />
+        <source-file src="src/ios/POITableViewCell.m" />
+        <header-file src="src/ios/UIViewController+HUD.h" />
+        <source-file src="src/ios/UIViewController+HUD.m" />
+        <resource-file src="src/ios/POITableViewCell.xib" />
         <podspec>
             <config>
                 <source url="https://github.com/CocoaPods/Specs.git"/>
