@@ -20,6 +20,8 @@
         <source-file src="src/ios/POITableViewCell.m" />
         <header-file src="src/ios/UIViewController+HUD.h" />
         <source-file src="src/ios/UIViewController+HUD.m" />
+        <header-file src="src/ios/MyNavigationController.h" />
+        <source-file src="src/ios/MyNavigationController.m" />
         <resource-file src="src/ios/POITableViewCell.xib" />
         <podspec>
             <config>
