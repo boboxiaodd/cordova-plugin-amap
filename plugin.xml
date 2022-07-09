@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="cordova-plugin-amap" version="0.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0">
+    <name>CDVPicker</name>
+    <js-module name="CDVAMap" src="www/map.js">
+        <clobbers target="CDVAMap" />
+    </js-module>
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="CDVAMap">
+                <param name="ios-package" value="CDVAMap" />
+            </feature>
+        </config-file>
+        <header-file src="src/ios/CDVAMap.h" />
+        <source-file src="src/ios/CDVAMap.m" />
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="AMap3DMap-NO-IDFA" />
+                <pod name="AMapSearch-NO-IDFA" />
+                <pod name="AMapLocation-NO-IDFA" />
+            </pods>
+        </podspec>
+    </platform>
+
+</plugin>
