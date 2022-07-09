@@ -17,7 +17,7 @@
 /** 设备的高 */
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 
-@interface ViewController ()<UISearchControllerDelegate,UISearchResultsUpdating,MAMapViewDelegate,AMapLocationManagerDelegate,AMapSearchDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface OpenMapViewController ()<UISearchControllerDelegate,UISearchResultsUpdating,MAMapViewDelegate,AMapLocationManagerDelegate,AMapSearchDelegate,UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic, strong)UISearchController *searchController;
 @property (nonatomic, assign)CLLocationCoordinate2D currentLocationCoordinate;
 @property (nonatomic, strong)MAMapView * mapView;
@@ -41,7 +41,7 @@
 
 @end
 
-@implementation ViewController
+@implementation OpenMapViewController
 
 - (UIImage *)imageFromView:(UIView *)view
 {

@@ -2,6 +2,9 @@
 #import "CDVAMap.h"
 #import <AMapLocationKit/AMapLocationKit.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
+#import "MyNavigationController.h"
+#import "OpenMapViewController.h"
+#import "MapViewController.h"
 
 @interface CDVAMap () <AMapLocationManagerDelegate>
 @property (nonatomic,strong) AMapLocationManager *locationManager;
@@ -59,7 +62,7 @@
 }
 - (void)openMap:(CDVInvokedUrlCommand *)command{
     NSDictionary *options = [command.arguments objectAtIndex: 0];
-    ViewController * vc = [[ViewController alloc] initWithType:[options valueForKey:@"type"]];
+    OpenMapViewController * vc = [[OpenMapViewController alloc] initWithType:[options valueForKey:@"type"]];
     vc.callBackBlock = ^(NSString *city,NSString *address,NSString * title, NSString * url, CGFloat lat, CGFloat lng) {
         [self send_event:command withMessage:@{
             @"name":title,
