@@ -12,6 +12,12 @@
 @end
 
 @implementation CDVAMap
+
+- (void)amapLocationManager:(AMapLocationManager *)manager doRequireLocationAuth:(CLLocationManager *)locationManager
+{
+    [locationManager requestAlwaysAuthorization];
+}
+
 -(void)pluginInitialize
 {
     [AMapServices sharedServices].apiKey = [self settingForKey:@"amap.key"];
