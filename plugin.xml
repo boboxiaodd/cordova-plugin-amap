@@ -32,7 +32,7 @@
                 <pod name="AMapSearch-NO-IDFA" />
                 <pod name="AMapLocation-NO-IDFA" />
                 <pod name="MJRefresh" />
-                <pod name="MBProgressHUD" />
+                <pod name="SVProgressHUD" />
             </pods>
         </podspec>
     </platform>
