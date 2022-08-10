@@ -2,7 +2,7 @@
 #import "CDVAMap.h"
 #import <AMapLocationKit/AMapLocationKit.h>
 #import <AMapFoundationKit/AMapFoundationKit.h>
-#import "MyNavigationController.h"
+#import "MapNavigationController.h"
 #import "OpenMapViewController.h"
 #import "MapViewController.h"
 
@@ -66,7 +66,7 @@
     NSDictionary *options = [command.arguments objectAtIndex: 0];
     CLLocation * location = [[CLLocation alloc] initWithLatitude:[[options valueForKey:@"lat"] floatValue] longitude:[[options valueForKey:@"lng"] floatValue]];
     MapViewController * vc = [[MapViewController alloc] initWithLocation:location title:[options valueForKey:@"title"] subtitle:[options valueForKey:@"subtitle"]];
-    MyNavigationController *nc = [[MyNavigationController alloc] initWithRootViewController:vc];
+    MapNavigationController *nc = [[MapNavigationController alloc] initWithRootViewController:vc];
     nc.modalPresentationStyle = UIModalPresentationFullScreen;
     nc.view.backgroundColor = [UIColor whiteColor];
     [self.viewController presentViewController:nc animated:YES completion:nil];
@@ -85,7 +85,7 @@
             @"lng": [NSString stringWithFormat:@"%g",lng]
         } Alive:NO State:YES];
     };
-    MyNavigationController *nc = [[MyNavigationController alloc] initWithRootViewController:vc];
+    MapNavigationController *nc = [[MapNavigationController alloc] initWithRootViewController:vc];
     nc.view.backgroundColor = [UIColor whiteColor];
     nc.modalPresentationStyle = UIModalPresentationFullScreen;
     [self.viewController presentViewController:nc animated:YES completion:^{

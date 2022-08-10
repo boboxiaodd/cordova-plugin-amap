@@ -5,13 +5,13 @@
 //  Created by 林海波 on 2021/4/14.
 //
 
-#import "MyNavigationController.h"
+#import "MapNavigationController.h"
 
-@interface MyNavigationController ()
+@interface MapNavigationController ()
 
 @end
 
-@implementation MyNavigationController
+@implementation MapNavigationController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
