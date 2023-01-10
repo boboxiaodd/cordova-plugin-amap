@@ -27,14 +27,19 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)amapLocationManager:(AMapLocationManager *)manager doRequireLocationAuth:(CLLocationManager *)locationManager
+{
+    [locationManager requestAlwaysAuthorization];
+}
+
 -(instancetype)initWithLocation:(CLLocation *)location title:(NSString *)title subtitle:(NSString *)subtitle
 {
     self = [super init];
     if (self) {
         [MAMapView updatePrivacyShow:AMapPrivacyShowStatusDidShow privacyInfo:AMapPrivacyInfoStatusDidContain];
         [MAMapView updatePrivacyAgree:AMapPrivacyAgreeStatusDidAgree];
-        CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-        self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, safeTop + 44, SCREEN_WIDTH, SCREEN_HEIGHT)];
+        CGFloat safeBottom =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.bottom;
+        self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, 44, SCREEN_WIDTH, self.view.frame.size.height - 120 - safeBottom)];
         self.mapView.delegate = self;
         self.mapView.mapType = MAMapTypeStandard;
         self.mapView.showsScale = NO;
@@ -46,18 +51,18 @@
         [self setCenterPoint];
         self.targetTitle = title;
         self.title = @"查看位置";
-        CGFloat safeBottom =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.bottom;
+
         CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
         CGFloat BarHeight = 68.0 + safeBottom;
-        UIView * infoView = [[UIView alloc] initWithFrame:CGRectMake(0.0, [UIScreen mainScreen].bounds.size.height - BarHeight , screenWidth, BarHeight)];
+        UIView * infoView = [[UIView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 64 - BarHeight , screenWidth, BarHeight)];
         infoView.backgroundColor = [UIColor whiteColor];
         [self.view addSubview:infoView];
-        
+
         UILabel * titleView = [[UILabel alloc] initWithFrame:CGRectMake(8, 8, screenWidth, 30)];
         titleView.font = [UIFont boldSystemFontOfSize:15.0f];
         titleView.text = title;
         [infoView addSubview:titleView];
-        
+
         UILabel * subtitleView = [[UILabel alloc] initWithFrame:CGRectMake(8,36, screenWidth, 30)];
         subtitleView.font = [UIFont systemFontOfSize:14.0f];
         subtitleView.text = subtitle;
@@ -83,7 +88,7 @@
     //单次定位超时时间
     [self.locationManager setLocationTimeout:6];
     [self.locationManager setReGeocodeTimeout:3];
-    
+
     [self showHudInView:self.view hint:@"正在定位..."];
     //带逆地理的单次定位
     [self.locationManager requestLocationWithReGeocode:YES completionBlock:^(CLLocation *location, AMapLocationReGeocode *regeocode, NSError *error) {
@@ -109,6 +114,7 @@
 
 - (void)showMapPoint{
     [_mapView setZoomLevel:15.1 animated:YES];
+    [_mapView setCompassOrigin:CGPointMake(SCREEN_WIDTH - 50, 20)];
     [_mapView setCenterCoordinate:self.currentLocationCoordinate animated:YES];
 }
 
@@ -116,20 +122,23 @@
     MAPointAnnotation * centerAnnotation = [[MAPointAnnotation alloc] init];//初始化注解对象
     centerAnnotation.coordinate = self.currentLocationCoordinate;//定位经纬度
     [self.mapView addAnnotation:centerAnnotation];//添加注解
-    
+
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+
     UIBarButtonItem * closeBtn = [[UIBarButtonItem alloc] initWithTitle:@"关闭" style:UIBarButtonItemStyleDone target:self action:@selector(closemap)];
     self.navigationItem.leftBarButtonItem = closeBtn;
-    
-    UIBarButtonItem * navBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"navigation"] style:UIBarButtonItemStylePlain target:self action:@selector(navmap)];
+
+    UIBarButtonItem * navBtn = [[UIBarButtonItem alloc] initWithTitle:@"导航" style:UIBarButtonItemStyleDone target:self action:@selector(navmap)];
     self.navigationItem.rightBarButtonItem = navBtn;
 }
 
-
+- (UIUserInterfaceStyle)overrideUserInterfaceStyle
+{
+    return UIUserInterfaceStyleLight;
+}
 
 @end

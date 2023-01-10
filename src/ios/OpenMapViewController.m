@@ -120,50 +120,70 @@
     /* 按照距离排序. */
     self.request.sortrule = 0;
     self.request.offset = 50;
-    self.request.requireExtension = YES;
+//    self.request.requireExtension = YES;
     self.selectedIndexPath=[NSIndexPath indexPathForRow:-1 inSection:-1];
+//    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle{
+    return UIStatusBarStyleDefault;
+}
+- (BOOL)prefersStatusBarHidden{
+    return NO;
+}
+
+- (UIUserInterfaceStyle)overrideUserInterfaceStyle
+{
+    return UIUserInterfaceStyleLight;
+}
+//-preferredUserInterfaceStyle
+
 - (void)setUpSearchController{
-//    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-//    self.searchController.delegate = self;
-//    self.searchController.searchResultsUpdater = self;
-//    self.searchController.dimsBackgroundDuringPresentation = NO;
-//    self.searchController.definesPresentationContext = YES;
-//    UISearchBar *bar = self.searchController.searchBar;
-//    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-//    bar.frame = CGRectMake(0, safeTop + 44, SCREEN_WIDTH, 44);
-//    bar.backgroundColor = [UIColor blackColor];
-//    bar.barTintColor = [UIColor blackColor];//[UIColor groupTableViewBackgroundColor];
-//    UITextField *searchField = [bar valueForKey:@"searchField"];
-//    searchField.placeholder = @"搜索地点";
-//    searchField.textColor = [UIColor whiteColor];
-//    [bar setTintColor:[UIColor whiteColor]];
-//    [bar setValue:@"取消" forKey:@"cancelButtonText"];
-//
-//    [self.view addSubview:bar];
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
+    self.searchController.delegate = self;
+    self.searchController.searchResultsUpdater = self;
+    self.searchController.dimsBackgroundDuringPresentation = NO;
+    self.searchController.definesPresentationContext = YES;
+    UISearchBar *bar = self.searchController.searchBar;
+    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
+    bar.frame = CGRectMake(0, 44, SCREEN_WIDTH, 44);
+    bar.backgroundColor = [UIColor whiteColor];
+    bar.barTintColor = [UIColor whiteColor];//[UIColor groupTableViewBackgroundColor];
+    UITextField *searchField = [bar valueForKey:@"searchField"];
+    searchField.placeholder = @"搜索地点";
+    searchField.textColor = [UIColor blackColor];
+    searchField.backgroundColor = [UIColor clearColor];
+    [searchField setValue:[UIColor grayColor] forKeyPath:@"placeholderLabel.textColor"];
+    [bar setTintColor:[UIColor blackColor]];
+    [bar setValue:@"取消" forKey:@"cancelButtonText"];
+
+    [self.view addSubview:bar];
 }
 
 - (void)initMapView{
     [MAMapView updatePrivacyShow:AMapPrivacyShowStatusDidShow privacyInfo:AMapPrivacyInfoStatusDidContain];
     [MAMapView updatePrivacyAgree:AMapPrivacyAgreeStatusDidAgree];
     CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-    self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, safeTop + 44, SCREEN_WIDTH, 344)];
+    self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, 88, SCREEN_WIDTH, 344)];
     self.mapView.delegate = self;
     self.mapView.mapType = MAMapTypeBus;
     self.mapView.showsScale = YES;
     self.mapView.showsCompass = YES;
     self.mapView.showsUserLocation = YES;
     [self.view addSubview:self.mapView];
-
+    [_mapView setCompassOrigin:CGPointMake(SCREEN_WIDTH - 50, 20)];
     _localButton = [UIButton buttonWithType:UIButtonTypeCustom];
 //    _localButton.backgroundColor = [UIColor redColor];
-    _localButton.frame = CGRectMake(SCREEN_WIDTH - 60, 244, 50, 50);
+    _localButton.frame = CGRectMake(SCREEN_WIDTH - 60, 200, 50, 50);
     [_localButton addTarget:self action:@selector(localButtonAction) forControlEvents:UIControlEventTouchUpInside];
 //    _localButton.layer.cornerRadius = 25;
 //    _localButton.clipsToBounds = YES;
-    NSLog(@"_icon = %@",_icon);
-    [_localButton setImage:[UIImage imageWithContentsOfFile: _icon] forState:UIControlStateNormal];
+    if(_icon){
+        [_localButton setImage:[UIImage imageWithContentsOfFile: _icon] forState:UIControlStateNormal];
+    }else{
+        [_localButton setImage:[UIImage imageNamed:@"postion"] forState:UIControlStateNormal];
+    }
     [self.mapView addSubview:_localButton];
 
 }
@@ -431,23 +451,27 @@
 #pragma mark - UISearchControllerDelegate代理
 - (void)willPresentSearchController:(UISearchController *)searchController{
 //    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, 44.0);
-//    self.mapView.frame = CGRectMake(0, safeTop + 44, SCREEN_WIDTH, 300);
-    self.tableView.frame = CGRectMake(0, 364, SCREEN_WIDTH, SCREEN_HEIGHT - 364);
+//    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, 44.0);
+    self.mapView.frame = CGRectMake(0, 54, SCREEN_WIDTH, 344);
+    self.searchTableView.frame = CGRectMake(0, 54, SCREEN_WIDTH, SCREEN_HEIGHT - 98);
     NSLog(@"ss---%@",NSStringFromCGRect(self.tableView.frame));
 
 }
 
 - (void)didDismissSearchController:(UISearchController *)searchController{
-    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-    self.searchController.searchBar.frame = CGRectMake(0, safeTop + 44, self.searchController.searchBar.frame.size.width, 44.0);
-//    self.mapView.frame = CGRectMake(0, safeTop + 88, SCREEN_WIDTH, 300);
+//    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
+//    self.searchController.searchBar.frame = CGRectMake(0, 44, self.searchController.searchBar.frame.size.width, 44.0);
+    self.mapView.frame = CGRectMake(0, 88, SCREEN_WIDTH, 344);
+    [_mapView setCompassOrigin:CGPointMake(SCREEN_WIDTH - 50, 20)];
     self.tableView.frame = CGRectMake(0, 408, SCREEN_WIDTH, SCREEN_HEIGHT - 408);
 //    [searchController.searchBar sizeToFit];
     [self.searchTableView removeFromSuperview];
 }
 
-
+- (void)mapViewRequireLocationAuth:(CLLocationManager *)locationManager
+{
+    [locationManager requestAlwaysAuthorization];
+}
 
 - (void)localButtonAction{
     [self locateAction];

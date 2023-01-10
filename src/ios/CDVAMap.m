@@ -67,13 +67,13 @@
     CLLocation * location = [[CLLocation alloc] initWithLatitude:[[options valueForKey:@"lat"] floatValue] longitude:[[options valueForKey:@"lng"] floatValue]];
     MapViewController * vc = [[MapViewController alloc] initWithLocation:location title:[options valueForKey:@"title"] subtitle:[options valueForKey:@"subtitle"]];
     MapNavigationController *nc = [[MapNavigationController alloc] initWithRootViewController:vc];
-    nc.modalPresentationStyle = UIModalPresentationFullScreen;
+//    nc.modalPresentationStyle = UIModalPresentationFullScreen;
     nc.view.backgroundColor = [UIColor whiteColor];
     [self.viewController presentViewController:nc animated:YES completion:nil];
 }
 - (void)openMap:(CDVInvokedUrlCommand *)command{
     NSDictionary *options = [command.arguments objectAtIndex: 0];
-    NSString * iconpath = [NSString stringWithFormat:@"%@%@",_filepath,[options valueForKey:@"icon"]];
+    NSString * iconpath = nil; //[NSString stringWithFormat:@"%@%@",_filepath,[options valueForKey:@"icon"]];
     OpenMapViewController * vc = [[OpenMapViewController alloc] initWithType:[options valueForKey:@"type"] withIcon:iconpath];
     vc.callBackBlock = ^(NSString *city,NSString *address,NSString * title, NSString * url, CGFloat lat, CGFloat lng) {
         [self send_event:command withMessage:@{
@@ -87,7 +87,7 @@
     };
     MapNavigationController *nc = [[MapNavigationController alloc] initWithRootViewController:vc];
     nc.view.backgroundColor = [UIColor whiteColor];
-    nc.modalPresentationStyle = UIModalPresentationFullScreen;
+//    nc.modalPresentationStyle = UIModalPresentationFullScreen;
     [self.viewController presentViewController:nc animated:YES completion:^{
 
     }];

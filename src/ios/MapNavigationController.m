@@ -16,21 +16,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
-    self.navigationBar.tintColor = [UIColor blackColor];
-//    self.navigationBar.backgroundColor = [UIColor grayColor];
-//    self.navigationBar.barStyle = UIBarStyleBlack;
+//    self.navigationBar.tintColor = [UIColor blackColor];
+    self.navigationBar.backgroundColor = [UIColor whiteColor];
+    self.navigationBar.barTintColor = [UIColor redColor];
     // Do any additional setup after loading the view.
 }
 
-- (BOOL)shouldAutorotate
-{
-    return NO;
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return [self.topViewController preferredStatusBarStyle];
+}
+- (BOOL)prefersStatusBarHidden {
+    return [self.topViewController prefersStatusBarHidden];
 }
 
-//- (UIStatusBarStyle)preferredStatusBarStyle
-//{
-//    return UIStatusBarStyleLightContent;
-//}
 /*
 #pragma mark - Navigation
 
