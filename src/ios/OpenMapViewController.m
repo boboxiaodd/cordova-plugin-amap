@@ -92,7 +92,7 @@
     if (self) {
         self.isSelectedAddress = true;
         self.request = [[AMapPOIAroundSearchRequest alloc] init];
-        self.request.keywords  = type;
+        self.request.types = type;
         self.icon = icon;
     }
     return self;
