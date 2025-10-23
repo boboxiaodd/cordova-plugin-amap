@@ -27,7 +27,7 @@
             <config>
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
-            <pods use-frameworks="true">
+            <pods>
                 <pod name="AMap3DMap-NO-IDFA" />
                 <pod name="AMapSearch-NO-IDFA" />
                 <pod name="AMapLocation-NO-IDFA" />
