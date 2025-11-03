@@ -98,6 +98,11 @@
     return self;
 }
 
+- (void)openSearch:(UIBarButtonItem *)sender {
+    self.searchController.searchBar.hidden = NO;
+    [self.searchController.searchBar becomeFirstResponder];
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"位置";
@@ -105,8 +110,9 @@
     UIBarButtonItem * closeBtn = [[UIBarButtonItem alloc] initWithTitle:@"确定" style:UIBarButtonItemStyleDone target:self action:@selector(closemap)];
     self.navigationItem.rightBarButtonItem = closeBtn;
 
-    UIBarButtonItem * cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleDone target:self action:@selector(cancelmap)];
+    UIBarButtonItem * cancelBtn = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStylePlain target:self action:@selector(cancelmap)];
     self.navigationItem.leftBarButtonItem = cancelBtn;
+    
 
     self.currentPage = 1;
     [self initMapView];
@@ -143,11 +149,12 @@
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
     self.searchController.delegate = self;
     self.searchController.searchResultsUpdater = self;
-    self.searchController.dimsBackgroundDuringPresentation = NO;
-    self.searchController.definesPresentationContext = YES;
+    self.searchController.obscuresBackgroundDuringPresentation = NO;
+    self.searchController.hidesNavigationBarDuringPresentation = NO;
+    self.searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
+//    self.searchController.definesPresentationContext = YES;
     UISearchBar *bar = self.searchController.searchBar;
-    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-    bar.frame = CGRectMake(0, 44, SCREEN_WIDTH, 44);
+//    bar.frame = CGRectMake(0, 44, SCREEN_WIDTH, 44);
     bar.backgroundColor = [UIColor whiteColor];
     bar.barTintColor = [UIColor whiteColor];//[UIColor groupTableViewBackgroundColor];
     UITextField *searchField = [bar valueForKey:@"searchField"];
@@ -158,14 +165,19 @@
     [bar setTintColor:[UIColor blackColor]];
     [bar setValue:@"取消" forKey:@"cancelButtonText"];
 
-    [self.view addSubview:bar];
+//    [self.view addSubview:bar];
+//    self.searchController.searchBar.placeholder = @"搜索地点";
+    self.navigationItem.searchController = self.searchController;
 }
 
 - (void)initMapView{
     [MAMapView updatePrivacyShow:AMapPrivacyShowStatusDidShow privacyInfo:AMapPrivacyInfoStatusDidContain];
     [MAMapView updatePrivacyAgree:AMapPrivacyAgreeStatusDidAgree];
-    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-    self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, 88, SCREEN_WIDTH, 344)];
+    CGFloat height = 44.0f;
+    if (@available(iOS 26, *)) {
+        height = 64.0f;
+    }
+    self.mapView = [[MAMapView alloc] initWithFrame:CGRectMake(0, height, SCREEN_WIDTH, 344)];
     self.mapView.delegate = self;
     self.mapView.mapType = MAMapTypeBus;
     self.mapView.showsScale = YES;
@@ -190,7 +202,8 @@
 
 - (UITableView *)tableView{
     if (_tableView == nil) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 408, SCREEN_WIDTH, SCREEN_HEIGHT - 408) style:UITableViewStylePlain];
+        CGRect f = self.mapView.frame;
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, f.size.height + 8, SCREEN_WIDTH, SCREEN_HEIGHT - 408) style:UITableViewStylePlain];
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.tableFooterView = [UIView new];
@@ -206,7 +219,7 @@
 
 - (UITableView *)searchTableView{
     if (_searchTableView == nil) {
-        CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
+        CGFloat safeTop =  self.parentViewController.view.safeAreaInsets.top;
         _searchTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 54 + safeTop, SCREEN_WIDTH, SCREEN_HEIGHT - 54 - safeTop) style:UITableViewStylePlain];
         _searchTableView.delegate = self;
         _searchTableView.dataSource = self;
@@ -450,21 +463,17 @@
 
 #pragma mark - UISearchControllerDelegate代理
 - (void)willPresentSearchController:(UISearchController *)searchController{
-//    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-//    self.searchController.searchBar.frame = CGRectMake(0, 0, self.searchController.searchBar.frame.size.width, 44.0);
-    self.mapView.frame = CGRectMake(0, 54, SCREEN_WIDTH, 344);
-    self.searchTableView.frame = CGRectMake(0, 54, SCREEN_WIDTH, SCREEN_HEIGHT - 98);
-    NSLog(@"ss---%@",NSStringFromCGRect(self.tableView.frame));
+//    self.mapView.frame = CGRectMake(0, 54, SCREEN_WIDTH, 344);
+//    self.searchTableView.frame = CGRectMake(0, 54, SCREEN_WIDTH, SCREEN_HEIGHT - 98);
+//    NSLog(@"ss---%@",NSStringFromCGRect(self.tableView.frame));
 
 }
 
 - (void)didDismissSearchController:(UISearchController *)searchController{
-//    CGFloat safeTop =  UIApplication.sharedApplication.keyWindow.safeAreaInsets.top;
-//    self.searchController.searchBar.frame = CGRectMake(0, 44, self.searchController.searchBar.frame.size.width, 44.0);
-    self.mapView.frame = CGRectMake(0, 88, SCREEN_WIDTH, 344);
-    [_mapView setCompassOrigin:CGPointMake(SCREEN_WIDTH - 50, 20)];
-    self.tableView.frame = CGRectMake(0, 408, SCREEN_WIDTH, SCREEN_HEIGHT - 408);
-//    [searchController.searchBar sizeToFit];
+//    self.mapView.frame = CGRectMake(0, 88, SCREEN_WIDTH, 344);
+//    [_mapView setCompassOrigin:CGPointMake(SCREEN_WIDTH - 50, 20)];
+//    self.tableView.frame = CGRectMake(0, 408, SCREEN_WIDTH, SCREEN_HEIGHT - 408);
+//    self.searchController.searchBar.hidden = YES;
     [self.searchTableView removeFromSuperview];
 }
 
