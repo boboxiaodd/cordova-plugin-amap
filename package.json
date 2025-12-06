@@ -1,5 +1,5 @@
 {
-    "name": "map",
+    "name": "cordova-plugin-amap",
     "version": "0.0.1",
     "description": "no description",
     "cordova": {
