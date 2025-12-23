@@ -132,6 +132,17 @@
 
 }
 
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:animated];
+    self.mapView.showsUserLocation = NO;
+    self.mapView.userTrackingMode = MAUserTrackingModeNone;
+    [self.mapView removeAnnotations:self.mapView.annotations];
+    [self.mapView removeFromSuperview];
+    self.mapView.delegate = nil;
+    self.mapView = nil;
+    NSLog(@"viewWillDisappear....");
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle{
     return UIStatusBarStyleDefault;
 }
